@@ -5,6 +5,7 @@
 //  Created by Jarrod Norwell on 21/9/2025.
 //
 
+import ColourKit
 import SwiftUI
 
 @available(iOS 18, *)
