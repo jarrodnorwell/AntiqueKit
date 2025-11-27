@@ -100,7 +100,7 @@ open class OnboardingController : UIViewController {
         }
         visualEffectView.translatesAutoresizingMaskIntoConstraints = false
         if #available(iOS 26, *) {
-            visualEffectView.cornerConfiguration = .uniformCorners(radius: .containerConcentric())
+            visualEffectView.cornerConfiguration = .corners(radius: .containerConcentric())
         }
         view.addSubview(visualEffectView)
         
