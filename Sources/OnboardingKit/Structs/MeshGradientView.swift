@@ -10,7 +10,7 @@ import SwiftUI
 
 @available(iOS 18, *)
 public struct MeshGradientView: View {
-    var colours: [Color]
+    var colours: [Colour]
     
     private let points: [SIMD2<Float>] = [
         .init(0.0, 0.0), .init(0.5, 0.0), .init(1.0, 0.0),
@@ -18,7 +18,7 @@ public struct MeshGradientView: View {
         .init(0.0, 1.0), .init(0.5, 1.0), .init(1.0, 1.0)
     ]
     
-    public init(colours: [Color] = Color.vibrantGreens) {
+    public init(colours: [Colour] = Colour.vibrantGreens) {
         self.colours = colours
     }
     
@@ -29,7 +29,7 @@ public struct MeshGradientView: View {
         .ignoresSafeArea()
     }
     
-    private func animated(for date: Date) -> [Color] {
+    private func animated(for date: Date) -> [Colour] {
         let phase = CGFloat(date.timeIntervalSince1970)
         return colours.enumerated().map { index, colour in
             let amount = cos(phase + Double(index) * 0.3) * 0.1
@@ -37,7 +37,7 @@ public struct MeshGradientView: View {
         }
     }
     
-    private func shift(colour: Color, by amount: Double) -> Color {
+    private func shift(colour: Colour, by amount: Double) -> Color {
         var hue: CGFloat = 0
         var saturation: CGFloat = 0
         var brightness: CGFloat = 0
