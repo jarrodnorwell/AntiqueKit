@@ -171,11 +171,18 @@ open class OnboardingController : UIViewController {
         }
         topCenteringView.addSubview(imageView)
         
-        imageView.centerXAnchor.constraint(equalTo: topCenteringView.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: topCenteringView.safeAreaLayoutGuide.centerYAnchor).isActive = true
-        imageView.widthAnchor.constraint(equalTo: topCenteringView.safeAreaLayoutGuide.widthAnchor,
-                                         multiplier: 2 / 3).isActive = true
-        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            imageView.topAnchor.constraint(equalTo: topCenteringView.safeAreaLayoutGuide.topAnchor).isActive = true
+            imageView.leadingAnchor.constraint(equalTo: topCenteringView.safeAreaLayoutGuide.leadingAnchor).isActive = true
+            imageView.bottomAnchor.constraint(equalTo: topCenteringView.safeAreaLayoutGuide.bottomAnchor).isActive = true
+            imageView.trailingAnchor.constraint(equalTo: topCenteringView.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        } else {
+            imageView.centerXAnchor.constraint(equalTo: topCenteringView.safeAreaLayoutGuide.centerXAnchor).isActive = true
+            imageView.centerYAnchor.constraint(equalTo: topCenteringView.safeAreaLayoutGuide.centerYAnchor).isActive = true
+            imageView.widthAnchor.constraint(equalTo: topCenteringView.safeAreaLayoutGuide.widthAnchor,
+                                             multiplier: 2 / 3).isActive = true
+            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        }
         
         let secondaryLabel: UILabel = .init()
         secondaryLabel.translatesAutoresizingMaskIntoConstraints = false
