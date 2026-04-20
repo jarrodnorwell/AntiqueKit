@@ -11,11 +11,13 @@ let package = Package(
     products: [
         .library(name: "AntiqueKit", targets: ["AntiqueKit"]),
         .library(name: "ColourKit", targets: ["ColourKit"]),
-        .library(name: "OnboardingKit", targets: ["OnboardingKit"])
+        .library(name: "OnboardingKit", targets: ["OnboardingKit"]),
+        .library(name: "SettingsKit", targets: ["SettingsKit"])
     ],
     targets: [
-        .target(name: "AntiqueKit", dependencies: ["ColourKit", "OnboardingKit"]),
+        .target(name: "AntiqueKit", dependencies: ["ColourKit", "OnboardingKit", "SettingsKit"]),
         .target(name: "ColourKit"),
-        .target(name: "OnboardingKit", dependencies: ["ColourKit"])
+        .target(name: "OnboardingKit", dependencies: ["ColourKit"]),
+        .target(name: "SettingsKit")
     ]
 )
