@@ -6,18 +6,23 @@ import PackageDescription
 let package = Package(
     name: "AntiqueKit",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v26)
     ],
     products: [
         .library(name: "AntiqueKit", targets: ["AntiqueKit"]),
         .library(name: "ColourKit", targets: ["ColourKit"]),
+        .library(name: "ConstraintKit", targets: ["ConstraintKit"]),
+        .library(name: "FontKit", targets: ["FontKit"]),
         .library(name: "OnboardingKit", targets: ["OnboardingKit"]),
         .library(name: "SettingsKit", targets: ["SettingsKit"])
     ],
     targets: [
-        .target(name: "AntiqueKit", dependencies: ["ColourKit", "OnboardingKit", "SettingsKit"]),
+        .target(name: "AntiqueKit", dependencies: ["ColourKit", "FontKit", "OnboardingKit", "SettingsKit"]),
         .target(name: "ColourKit"),
-        .target(name: "OnboardingKit", dependencies: ["ColourKit"]),
+        .target(name: "ConstraintKit"),
+        .target(name: "FontKit"),
+        .target(name: "OnboardingKit", dependencies: ["ColourKit", "ConstraintKit", "FontKit"]),
         .target(name: "SettingsKit")
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )
