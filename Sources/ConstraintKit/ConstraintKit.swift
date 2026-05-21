@@ -31,4 +31,6 @@ public extension UIView {
     
     var height: NSLayoutDimension { heightAnchor }
     var width: NSLayoutDimension { widthAnchor }
+
+    var salg: UILayoutGuide { safeAreaLayoutGuide }
 }
