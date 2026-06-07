@@ -8,9 +8,9 @@
 import ColourKit
 import UIKit
 
-typealias Actions = (touchDown: (UIAction) async -> Void, touchUpInsideOutside: (UIAction) async -> Void)
+public typealias Actions = (touchDown: (UIAction) async -> Void, touchUpInsideOutside: (UIAction) async -> Void)
 
-extension UIButton {
+public extension UIButton {
     static func button(with configuration: Configuration, actions: Actions, _ menu: UIMenu? = nil) -> UIButton {
         let button: UIButton = .init(configuration: configuration)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -49,7 +49,7 @@ extension UIButton {
     }
 }
 
-extension UIButton.Configuration {
+public extension UIButton.Configuration {
     static func glassConfiguration(_ size: Size, _ cornerStyle: CornerStyle,
                                    _ image: UIImage? = nil, _ text: String? = nil, _ scale: UIImage.SymbolScale = .large,
                                    _ tintColor: UIColour? = nil) -> UIButton.Configuration {
@@ -80,7 +80,7 @@ extension UIButton.Configuration {
     }
 }
 
-extension UIButton.Configuration {
+public extension UIButton.Configuration {
     static func filledConfiguration(_ size: Size, _ cornerStyle: CornerStyle,
                                     _ image: UIImage? = nil, _ text: String? = nil, _ scale: UIImage.SymbolScale = .large) -> UIButton.Configuration {
         var configuration: UIButton.Configuration = .filled()
@@ -102,8 +102,8 @@ extension UIButton.Configuration {
     }
 }
 
-extension UIButton.Configuration {
-    static func configuration(_ size: Size, _ cornerStyle: CornerStyle,
+public extension UIButton.Configuration {
+    public static func configuration(_ size: Size, _ cornerStyle: CornerStyle,
                               _ image: UIImage? = nil, _ text: String? = nil, _ scale: UIImage.SymbolScale? = .large,
                               _ tintColor: UIColour? = nil) -> UIButton.Configuration {
         if #available(iOS 26, *) {
