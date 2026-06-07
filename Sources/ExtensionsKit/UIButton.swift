@@ -105,7 +105,7 @@ extension UIButton.Configuration {
 extension UIButton.Configuration {
     static func configuration(_ size: Size, _ cornerStyle: CornerStyle,
                               _ image: UIImage? = nil, _ text: String? = nil, _ scale: UIImage.SymbolScale? = .large,
-                              _ tintColor: UIColor? = nil) -> UIButton.Configuration {
+                              _ tintColor: UIColour? = nil) -> UIButton.Configuration {
         if #available(iOS 26, *) {
             glassConfiguration(size, cornerStyle, image, text, scale ?? .large, tintColor)
         } else {
