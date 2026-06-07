@@ -23,7 +23,7 @@ let package = Package(
         .target(name: "ConstraintKit"),
         .target(name: "ExtensionsKit", dependencies: ["ColourKit"]),
         .target(name: "FontKit"),
-        .target(name: "OnboardingKit", dependencies: ["ColourKit", "ConstraintKit", "FontKit"]),
+        .target(name: "OnboardingKit", dependencies: ["ColourKit", "ConstraintKit", "ExtensionsKit", "FontKit"]),
         .target(name: "SettingsKit")
     ],
     swiftLanguageModes: [.v6]
