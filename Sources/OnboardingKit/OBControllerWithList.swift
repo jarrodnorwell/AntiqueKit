@@ -9,7 +9,7 @@ import ConstraintKit
 import Foundation
 import UIKit
 
-public class OBControllerWithList : UIViewController {
+open class OBControllerWithList : UIViewController {
     var dataSource: UICollectionViewDiffableDataSource<String, CellConfiguration>? = nil
     var snapshot: NSDiffableDataSourceSnapshot<String, CellConfiguration>? = nil
     
@@ -37,7 +37,7 @@ public class OBControllerWithList : UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     

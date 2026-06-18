@@ -40,7 +40,7 @@ extension UIViewController {
 }
 
 
-public class OBController : UIViewController {
+open class OBController : UIViewController {
     var leftContainerView: UIView? = nil,
         rightContainerView: UIView? = nil
     
@@ -67,7 +67,7 @@ public class OBController : UIViewController {
         }
     }
     
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
