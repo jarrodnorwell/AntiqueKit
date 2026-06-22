@@ -44,7 +44,7 @@ class OBListCell : UICollectionViewCell {
             return
         }
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         contentView.addSubview(imageView)
         
         textLabel = UILabel()
@@ -60,21 +60,23 @@ class OBListCell : UICollectionViewCell {
             return
         }
         secondaryTextLabel.translatesAutoresizingMaskIntoConstraints = false
-        secondaryTextLabel.numberOfLines = 3
+        secondaryTextLabel.numberOfLines = 5
         contentView.addSubview(secondaryTextLabel)
         
         contentView.addConstraints([
-            imageView.top.constraint(equalTo: contentView.safeAreaLayoutGuide.top, constant: 20.0),
-            imageView.left.constraint(equalTo: contentView.safeAreaLayoutGuide.left, constant: 20.0),
+            imageView.top.constraint(equalTo: contentView.salg.top, constant: 20.0),
+            imageView.left.constraint(equalTo: contentView.salg.left, constant: 20.0),
+            imageView.width.constraint(equalToConstant: 24.0),
+            imageView.height.constraint(equalTo: imageView.salg.widthAnchor),
             
-            textLabel.top.constraint(equalTo: contentView.safeAreaLayoutGuide.top, constant: 20.0),
-            textLabel.left.constraint(equalTo: imageView.safeAreaLayoutGuide.right, constant: 20.0),
-            textLabel.right.constraint(lessThanOrEqualTo: contentView.safeAreaLayoutGuide.right, constant: -20.0),
+            textLabel.top.constraint(equalTo: contentView.salg.top, constant: 20.0),
+            textLabel.left.constraint(equalTo: imageView.salg.right, constant: 20.0),
+            textLabel.right.constraint(lessThanOrEqualTo: contentView.salg.right, constant: -20.0),
             
-            secondaryTextLabel.top.constraint(equalTo: textLabel.safeAreaLayoutGuide.bottom, constant: 8.0),
-            secondaryTextLabel.left.constraint(equalTo: imageView.safeAreaLayoutGuide.right, constant: 20.0),
-            secondaryTextLabel.bottom.constraint(equalTo: contentView.safeAreaLayoutGuide.bottom, constant: -20.0),
-            secondaryTextLabel.right.constraint(lessThanOrEqualTo: contentView.safeAreaLayoutGuide.right, constant: -20.0),
+            secondaryTextLabel.top.constraint(equalTo: textLabel.salg.bottom, constant: 8.0),
+            secondaryTextLabel.left.constraint(equalTo: imageView.salg.right, constant: 20.0),
+            secondaryTextLabel.bottom.constraint(equalTo: contentView.salg.bottom, constant: -20.0),
+            secondaryTextLabel.right.constraint(lessThanOrEqualTo: contentView.salg.right, constant: -20.0),
         ])
     }
     
