@@ -112,7 +112,7 @@ open class OBController : UIViewController {
         }
         
         let subviewToAddSubviews: UIView = vibrancyVisualEffectView?.contentView ?? view
-        let isPortrait: Bool = interfaceOrientation().isPortrait
+        let isPortrait: Bool = UIDevice.current.userInterfaceIdiom == .pad || interfaceOrientation().isPortrait
         
         leftContainerView = UIView()
         guard let leftContainerView else {
@@ -415,9 +415,7 @@ open class OBController : UIViewController {
             ])
         }
         
-        constraints.landscape.append(contentsOf: [
-            
-        ])
+        constraints.landscape.append(contentsOf: constraints.portrait)
     }
     
     func addConstraintsForPhone() {

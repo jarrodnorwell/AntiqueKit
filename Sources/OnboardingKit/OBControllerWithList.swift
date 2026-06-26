@@ -64,7 +64,7 @@ open class OBControllerWithList : UIViewController {
         }
         
         let subviewToAddSubviews: UIView = visualEffectView?.contentView ?? view
-        let isPortrait: Bool = interfaceOrientation().isPortrait
+        let isPortrait: Bool = UIDevice.current.userInterfaceIdiom == .pad || interfaceOrientation().isPortrait
         
         leftContainerView = UIView()
         guard let leftContainerView else {
@@ -403,8 +403,87 @@ open class OBControllerWithList : UIViewController {
         }
         
         constraints.landscape.append(contentsOf: [
+            imageView.top.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.top, constant: 20.0),
             
+            textLabel.top.constraint(equalTo: imageView.safeAreaLayoutGuide.bottom, constant: 20.0),
+            secondaryTextLabel.top.constraint(equalTo: textLabel.safeAreaLayoutGuide.bottom, constant: 8.0),
+            
+            collectionView.top.constraint(equalTo: secondaryTextLabel.safeAreaLayoutGuide.bottom, constant: 20.0),
+            collectionView.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+            collectionView.bottom.constraint(equalTo: stackView.safeAreaLayoutGuide.top, constant: -20.0),
+            collectionView.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
+            
+            stackView.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+            stackView.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
+            stackView.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX)
         ])
+        
+        let landscapeTextAlignmentConstraints: [NSLayoutConstraint] = switch configuration.textConfiguration.alignment {
+        case .left:
+            [
+                imageView.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                
+                textLabel.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                textLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
+            ]
+        case .center:
+            [
+                imageView.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX),
+                
+                textLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                textLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
+                textLabel.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX)
+            ]
+        case .right:
+            [
+                imageView.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
+                
+                textLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                textLabel.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
+            ]
+        default:
+            []
+        }
+        
+        constraints.landscape.append(contentsOf: landscapeTextAlignmentConstraints)
+        
+        let landscapeSecondaryTextAlignmentConstraints: [NSLayoutConstraint] = switch configuration.textConfiguration.alignment {
+        case .left:
+            [
+                secondaryTextLabel.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                secondaryTextLabel.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
+            ]
+        case .center:
+            [
+                secondaryTextLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                secondaryTextLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
+                secondaryTextLabel.centerX.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX)
+            ]
+        case .right:
+            [
+                secondaryTextLabel.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                secondaryTextLabel.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
+            ]
+        default:
+            []
+        }
+        
+        constraints.landscape.append(contentsOf: landscapeSecondaryTextAlignmentConstraints)
+        
+        if let tertiaryTextLabel {
+            constraints.landscape.append(contentsOf: [
+                tertiaryTextLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                tertiaryTextLabel.bottom.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.bottom),
+                tertiaryTextLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
+                tertiaryTextLabel.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX),
+                
+                stackView.bottom.constraint(equalTo: tertiaryTextLabel.safeAreaLayoutGuide.top, constant: -20.0)
+            ])
+        } else {
+            constraints.landscape.append(contentsOf: [
+                stackView.bottom.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.bottom)
+            ])
+        }
     }
     
     func addConstraintsForPhone() {
