@@ -195,7 +195,6 @@ open class OBControllerWithList : UIViewController {
         }
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .clear
-        collectionView.clipsToBounds = false
         if #available(iOS 26.0, *) {
             collectionView.cornerConfiguration = .uniformCorners(radius: .fixed(20.0))
         }
@@ -668,7 +667,7 @@ open class OBControllerWithList : UIViewController {
                 stackView.bottom.constraint(equalTo: tertiaryTextLabel.safeAreaLayoutGuide.top, constant: -20.0)
             ])
         } else {
-            constraints.portrait.append(contentsOf: [
+            constraints.landscape.append(contentsOf: [
                 stackView.bottom.constraint(equalTo: leftContainerView.safeAreaLayoutGuide.bottom, constant: -20.0)
             ])
         }
