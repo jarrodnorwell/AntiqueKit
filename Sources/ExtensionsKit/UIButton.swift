@@ -49,6 +49,7 @@ public extension UIButton {
     }
 }
 
+@available(iOS 26, *)
 public extension UIButton.Configuration {
     static func glassConfiguration(_ size: Size, _ cornerStyle: CornerStyle,
                                    _ image: UIImage? = nil, _ text: String? = nil, _ scale: UIImage.SymbolScale = .large,
@@ -103,7 +104,7 @@ public extension UIButton.Configuration {
 }
 
 public extension UIButton.Configuration {
-    public static func configuration(_ size: Size, _ cornerStyle: CornerStyle,
+    static func configuration(_ size: Size, _ cornerStyle: CornerStyle,
                               _ image: UIImage? = nil, _ text: String? = nil, _ scale: UIImage.SymbolScale? = .large,
                               _ tintColor: UIColour? = nil) -> UIButton.Configuration {
         if #available(iOS 26, *) {

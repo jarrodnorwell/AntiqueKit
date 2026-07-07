@@ -99,7 +99,12 @@ class OBListCell : UICollectionViewCell {
             }
             
             backgroundColor = .secondarySystemBackground
-            cornerConfiguration = .uniformCorners(radius: .fixed(24.0))
+            if #available(iOS 26.0, *) {
+                cornerConfiguration = .uniformCorners(radius: .fixed(24.0))
+            } else {
+                layer.cornerCurve = .continuous
+                layer.cornerRadius = 24.0
+            }
         }
         
         imageView.image = configuration.image?
