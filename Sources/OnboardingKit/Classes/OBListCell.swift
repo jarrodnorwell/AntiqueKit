@@ -18,26 +18,39 @@ class OBListCell : UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = .clear
         if #available(iOS 26.0, *) {
-            backgroundColor = .clear
             cornerConfiguration = .uniformCorners(radius: .fixed(24.0))
+        } else {
+            clipsToBounds = true
+            layer.cornerCurve = .continuous
+            layer.cornerRadius = 24.0
         }
         
-        if #available(iOS 26.0, *) {
-            visualEffectView = UIVisualEffectView(effect: UIGlassEffect(style: .regular))
-            guard let visualEffectView else {
-                return
-            }
-            visualEffectView.translatesAutoresizingMaskIntoConstraints = false
-            visualEffectView.cornerConfiguration = .uniformCorners(radius: .fixed(24.0))
-            addSubview(visualEffectView)
-            sendSubviewToBack(visualEffectView)
-            
-            visualEffectView.top.constraint(equalTo: safeAreaLayoutGuide.top).isActive = true
-            visualEffectView.left.constraint(equalTo: safeAreaLayoutGuide.left).isActive = true
-            visualEffectView.bottom.constraint(equalTo: safeAreaLayoutGuide.bottom).isActive = true
-            visualEffectView.right.constraint(equalTo: safeAreaLayoutGuide.right).isActive = true
+        visualEffectView = if #available(iOS 26.0, *) {
+            UIVisualEffectView(effect: UIGlassEffect(style: .regular))
+        } else {
+            UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
         }
+        
+        guard let visualEffectView else {
+            return
+        }
+        visualEffectView.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 26.0, *) {
+            visualEffectView.cornerConfiguration = .uniformCorners(radius: .fixed(24.0))
+        } else {
+            visualEffectView.clipsToBounds = true
+            visualEffectView.layer.cornerCurve = .continuous
+            visualEffectView.layer.cornerRadius = 24.0
+        }
+        addSubview(visualEffectView)
+        sendSubviewToBack(visualEffectView)
+        
+        visualEffectView.top.constraint(equalTo: safeAreaLayoutGuide.top).isActive = true
+        visualEffectView.left.constraint(equalTo: safeAreaLayoutGuide.left).isActive = true
+        visualEffectView.bottom.constraint(equalTo: safeAreaLayoutGuide.bottom).isActive = true
+        visualEffectView.right.constraint(equalTo: safeAreaLayoutGuide.right).isActive = true
         
         imageView = UIImageView()
         guard let imageView else {
@@ -90,18 +103,17 @@ class OBListCell : UICollectionViewCell {
         }
         
         if !overFullScreen {
-            if #available(iOS 26.0, *) {
-                guard let visualEffectView else {
-                    return
-                }
-                
-                visualEffectView.isHidden = true
+            guard let visualEffectView else {
+                return
             }
+            
+            visualEffectView.isHidden = true
             
             backgroundColor = .secondarySystemBackground
             if #available(iOS 26.0, *) {
                 cornerConfiguration = .uniformCorners(radius: .fixed(24.0))
             } else {
+                clipsToBounds = true
                 layer.cornerCurve = .continuous
                 layer.cornerRadius = 24.0
             }

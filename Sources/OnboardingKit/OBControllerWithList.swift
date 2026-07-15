@@ -43,14 +43,14 @@ open class OBControllerWithList : UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = if #available(iOS 18.0, *), modalPresentationStyle == .overFullScreen {
+        view.backgroundColor = if modalPresentationStyle == .overFullScreen {
             .clear
         } else {
             .systemBackground
         }
         
-        if #available(iOS 18.0, *), modalPresentationStyle == .overFullScreen {
-            visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
+        if modalPresentationStyle == .overFullScreen {
+            visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
             guard let visualEffectView else {
                 return
             }
@@ -197,6 +197,10 @@ open class OBControllerWithList : UIViewController {
         collectionView.backgroundColor = .clear
         if #available(iOS 26.0, *) {
             collectionView.cornerConfiguration = .uniformCorners(radius: .fixed(20.0))
+        } else {
+            collectionView.clipsToBounds = true
+            collectionView.layer.cornerCurve = .continuous
+            collectionView.layer.cornerRadius = 20.0
         }
         if isPortrait {
             subviewToAddSubviews.insertSubview(collectionView, belowSubview: imageView)

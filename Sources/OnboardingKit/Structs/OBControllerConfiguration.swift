@@ -29,4 +29,16 @@ public struct OBControllerConfiguration {
         self.buttons = buttons
         self.colors = colors
     }
+    
+    public static var noop: OBControllerConfiguration {
+        OBControllerConfiguration(textConfiguration: LabelConfiguration(alignment: .left,
+                                                                        color: .label,
+                                                                        font: .regular(from: .largeTitle),
+                                                                        text: ""),
+                                  secondaryConfiguration: LabelConfiguration(alignment: .left,
+                                                                             color: .label,
+                                                                             font: .regular(from: .largeTitle),
+                                                                             text: ""),
+                                  buttons: [])
+    }
 }

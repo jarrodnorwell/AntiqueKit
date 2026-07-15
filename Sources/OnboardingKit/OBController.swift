@@ -6,6 +6,7 @@
 //
 
 import ColourKit
+import ExtensionsKit
 import FontKit
 import SwiftUI
 import UIKit
@@ -187,12 +188,11 @@ open class OBController : UIViewController {
         }
         
         let mapped: [UIButton] = configuration.buttons.map { button in
-            let button: UIButton = UIButton(configuration: button.configuration, primaryAction: UIAction { action in
-                Task { @MainActor in
-                    await button.action(self)
-                }
-            })
-            return button
+            UIButton(configuration: button.configuration, primaryAction: UIAction { action in
+               Task { @MainActor in
+                   await button.action(self)
+               }
+           })
         }
         
         stackView = UIStackView(arrangedSubviews: mapped)
@@ -291,11 +291,12 @@ open class OBController : UIViewController {
             subviewToAddSubviews.addSubview(imageView)
             subviewToAddSubviews.addSubview(textLabel)
             subviewToAddSubviews.addSubview(secondaryTextLabel)
-            view.addSubview(stackView)
             
             if let tertiaryTextLabel {
                 subviewToAddSubviews.addSubview(tertiaryTextLabel)
             }
+            
+            view.addSubview(stackView)
         } else {
             let subviewToAddSubviews: UIView = vibrancyVisualEffectView?.contentView ?? view
             
@@ -315,11 +316,12 @@ open class OBController : UIViewController {
             leftContainerView.addSubview(imageView)
             rightContainerView.addSubview(textLabel)
             rightContainerView.addSubview(secondaryTextLabel)
-            view.addSubview(stackView)
             
             if let tertiaryTextLabel {
                 rightContainerView.addSubview(tertiaryTextLabel)
             }
+            
+            view.addSubview(stackView)
         }
     }
     
