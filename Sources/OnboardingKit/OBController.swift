@@ -47,7 +47,7 @@ open class OBController : UIViewController {
     
     var vibrancyVisualEffectView: UIVisualEffectView? = nil
     
-    var imageView: UIImageView? = nil
+    public var imageView: UIImageView? = nil
     
     var textLabel: UILabel? = nil,
         secondaryTextLabel: UILabel? = nil,
