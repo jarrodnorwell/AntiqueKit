@@ -13,11 +13,12 @@ public struct OBControllerWithListConfiguration {
     public var tertiaryConfiguration: LabelConfiguration? = nil
     
     public let buttons: [(configuration: UIButton.Configuration, action: @MainActor (UIViewController) async -> Void)]
-    public let cells: [CellConfiguration]
+    public let cells: [String : [CellConfiguration]]
     
     public init(image: UIImage? = nil,
                 textConfiguration: LabelConfiguration, secondaryConfiguration: LabelConfiguration, tertiaryConfiguration: LabelConfiguration? = nil,
-                buttons: [(configuration: UIButton.Configuration, action: @MainActor (UIViewController) async -> Void)], cells: [CellConfiguration]) {
+                buttons: [(configuration: UIButton.Configuration, action: @MainActor (UIViewController) async -> Void)],
+                cells: [String : [CellConfiguration]]) {
         self.image = image
         self.textConfiguration = textConfiguration
         self.secondaryConfiguration = secondaryConfiguration

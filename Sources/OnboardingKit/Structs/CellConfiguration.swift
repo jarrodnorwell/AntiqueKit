@@ -7,8 +7,12 @@
 
 import UIKit
 
-public struct CellConfiguration : Equatable, Hashable, @unchecked Sendable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+public struct CellConfiguration : Comparable, Equatable, Hashable, @unchecked Sendable {
+    public static func < (lhs: CellConfiguration, rhs: CellConfiguration) -> Bool {
+        lhs.labels.primary.text.localizedCaseInsensitiveCompare(rhs.labels.primary.text) == .orderedAscending
+    }
+    
+    public static func == (lhs: CellConfiguration, rhs: CellConfiguration) -> Bool {
         lhs.id == rhs.id
     }
     

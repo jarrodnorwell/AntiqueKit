@@ -380,7 +380,7 @@ open class OBController : UIViewController {
         
         constraints.portrait.append(contentsOf: portraitTextAlignmentConstraints)
         
-        let portraitSecondaryTextAlignmentConstraints: [NSLayoutConstraint] = switch configuration.textConfiguration.alignment {
+        let portraitSecondaryTextAlignmentConstraints: [NSLayoutConstraint] = switch configuration.secondaryConfiguration.alignment {
         case .left:
             [
                 secondaryTextLabel.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),

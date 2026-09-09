@@ -164,17 +164,19 @@ open class OBControllerWithList : UIViewController {
         collectionView = UICollectionView(frame: .zero,
                                           collectionViewLayout: UICollectionViewCompositionalLayout(sectionProvider: { sectionIndex, layoutEnvironment in
             guard let dataSource = self.dataSource,
-                  let sectionIdentifier: String = dataSource.sectionIdentifier(for: sectionIndex) else {
+                  let _: String = dataSource.sectionIdentifier(for: sectionIndex) else {
                 return nil
             }
             
-            let items: Int = dataSource.snapshot().itemIdentifiers(inSection: sectionIdentifier).count
+            // let items: Int = dataSource.snapshot().itemIdentifiers(inSection: sectionIdentifier).count
             let itemsInRow: CGFloat = if self.iPhone {
                 1.0
             } else {
-                items == 1 ? 1.0 : 0.5
+                0.33
             }
             
+            let boundaryItemFullWidthSize: NSCollectionLayoutSize = NSCollectionLayoutSize(widthDimension: NSCollectionLayoutDimension.fractionalWidth(1.0),
+                                                                                           heightDimension: NSCollectionLayoutDimension.estimated(44.0))
             let estimatedLayoutDimension: NSCollectionLayoutDimension = NSCollectionLayoutDimension.estimated(100.0)
             let fullWidthLayoutDimension: NSCollectionLayoutDimension = NSCollectionLayoutDimension.fractionalWidth(1.0)
             let calculatedWidthLayoutDimension: NSCollectionLayoutDimension = NSCollectionLayoutDimension.fractionalWidth(itemsInRow)
@@ -186,7 +188,14 @@ open class OBControllerWithList : UIViewController {
                                                                                     subitems: [item])
             group.interItemSpacing = NSCollectionLayoutSpacing.fixed(20.0)
             
+            let header: NSCollectionLayoutBoundarySupplementaryItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: boundaryItemFullWidthSize,
+                                                                                                                  elementKind: UICollectionView.elementKindSectionHeader,
+                                                                                                                  alignment: .top)
+            header.pinToVisibleBounds = false
+            
             let section: NSCollectionLayoutSection = NSCollectionLayoutSection(group: group)
+            section.boundarySupplementaryItems = [header]
+            section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
             section.interGroupSpacing = 20.0
             return section
         }, configuration: compositionalLayoutConfiguration))
@@ -195,13 +204,7 @@ open class OBControllerWithList : UIViewController {
         }
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .clear
-        if #available(iOS 26.0, *) {
-            collectionView.cornerConfiguration = .uniformCorners(radius: .fixed(20.0))
-        } else {
-            collectionView.clipsToBounds = true
-            collectionView.layer.cornerCurve = .continuous
-            collectionView.layer.cornerRadius = 20.0
-        }
+        collectionView.delegate = self
         if isPortrait {
             subviewToAddSubviews.insertSubview(collectionView, belowSubview: imageView)
         } else {
@@ -224,6 +227,15 @@ open class OBControllerWithList : UIViewController {
             cell.configure(with: itemIdentifier, self.modalPresentationStyle == .overFullScreen)
         }
         
+        let supplementaryCell: UICollectionView.SupplementaryRegistration<UICollectionViewListCell> = UICollectionView.SupplementaryRegistration(elementKind: UICollectionView.elementKindSectionHeader) { supplementaryView, elementKind, indexPath in
+            var contentConfiguration = UIListContentConfiguration.extraProminentInsetGroupedHeader()
+            if let dataSource: UICollectionViewDiffableDataSource<String, CellConfiguration> = self.dataSource,
+               let system: String = dataSource.sectionIdentifier(for: indexPath.section) {
+                contentConfiguration.text = system
+            }
+            supplementaryView.contentConfiguration = contentConfiguration
+        }
+        
         dataSource = UICollectionViewDiffableDataSource<String, CellConfiguration>(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
             collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
         }
@@ -232,12 +244,20 @@ open class OBControllerWithList : UIViewController {
             return
         }
         
+        dataSource.supplementaryViewProvider = { collectionView, elementKind, indexPath in
+            collectionView.dequeueConfiguredReusableSupplementary(using: supplementaryCell, for: indexPath)
+        }
+        
         snapshot = NSDiffableDataSourceSnapshot<String, CellConfiguration>()
         guard var snapshot else {
             return
         }
-        snapshot.appendSections(["Section 0"])
-        snapshot.appendItems(configuration.cells, toSection: "Section 0")
+        
+        snapshot.appendSections(configuration.cells.keys.sorted())
+        for (title, cells) in configuration.cells {
+            snapshot.appendItems(cells.sorted(), toSection: title)
+        }
+        
         Task {
             await dataSource.apply(snapshot)
         }
@@ -367,21 +387,27 @@ open class OBControllerWithList : UIViewController {
         
         constraints.portrait.append(contentsOf: portraitTextAlignmentConstraints)
         
-        let portraitSecondaryTextAlignmentConstraints: [NSLayoutConstraint] = switch configuration.textConfiguration.alignment {
+        let portraitSecondaryTextAlignmentConstraints: [NSLayoutConstraint] = switch configuration.secondaryConfiguration.alignment {
         case .left:
             [
+                imageView.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                
                 secondaryTextLabel.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
-                secondaryTextLabel.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
+                secondaryTextLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
             ]
         case .center:
             [
+                imageView.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX),
+                
                 secondaryTextLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 secondaryTextLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
-                secondaryTextLabel.centerX.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX)
+                secondaryTextLabel.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX)
             ]
         case .right:
             [
-                secondaryTextLabel.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                imageView.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
+                
+                secondaryTextLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 secondaryTextLabel.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
             ]
         default:
@@ -450,21 +476,27 @@ open class OBControllerWithList : UIViewController {
         
         constraints.landscape.append(contentsOf: landscapeTextAlignmentConstraints)
         
-        let landscapeSecondaryTextAlignmentConstraints: [NSLayoutConstraint] = switch configuration.textConfiguration.alignment {
+        let landscapeSecondaryTextAlignmentConstraints: [NSLayoutConstraint] = switch configuration.secondaryConfiguration.alignment {
         case .left:
             [
+                imageView.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                
                 secondaryTextLabel.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
-                secondaryTextLabel.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
+                secondaryTextLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
             ]
         case .center:
             [
+                imageView.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX),
+                
                 secondaryTextLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 secondaryTextLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
-                secondaryTextLabel.centerX.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX)
+                secondaryTextLabel.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX)
             ]
         case .right:
             [
-                secondaryTextLabel.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                imageView.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
+                
+                secondaryTextLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 secondaryTextLabel.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
             ]
         default:
@@ -503,9 +535,9 @@ open class OBControllerWithList : UIViewController {
             secondaryTextLabel.top.constraint(equalTo: textLabel.safeAreaLayoutGuide.bottom, constant: 8.0),
             
             collectionView.top.constraint(equalTo: secondaryTextLabel.safeAreaLayoutGuide.bottom, constant: 20.0),
-            collectionView.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+            collectionView.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left),
             collectionView.bottom.constraint(equalTo: stackView.safeAreaLayoutGuide.top, constant: -20.0),
-            collectionView.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
+            collectionView.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right),
             
             stackView.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
             stackView.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
@@ -600,9 +632,9 @@ open class OBControllerWithList : UIViewController {
             secondaryTextLabel.top.constraint(equalTo: textLabel.safeAreaLayoutGuide.bottom, constant: 8.0),
             
             collectionView.top.constraint(equalTo: rightContainerView.safeAreaLayoutGuide.top, constant: 20.0),
-            collectionView.left.constraint(equalTo: rightContainerView.safeAreaLayoutGuide.left, constant: 20.0),
+            collectionView.left.constraint(equalTo: rightContainerView.safeAreaLayoutGuide.left),
             collectionView.bottom.constraint(equalTo: rightContainerView.safeAreaLayoutGuide.bottom, constant: -20.0),
-            collectionView.right.constraint(equalTo: rightContainerView.safeAreaLayoutGuide.right, constant: -20.0),
+            collectionView.right.constraint(equalTo: rightContainerView.safeAreaLayoutGuide.right),
             
             stackView.left.constraint(greaterThanOrEqualTo: leftContainerView.safeAreaLayoutGuide.left, constant: 20.0),
             stackView.right.constraint(lessThanOrEqualTo: leftContainerView.safeAreaLayoutGuide.right, constant: -20.0),
@@ -675,5 +707,21 @@ open class OBControllerWithList : UIViewController {
                 stackView.bottom.constraint(equalTo: leftContainerView.safeAreaLayoutGuide.bottom, constant: -20.0)
             ])
         }
+    }
+}
+
+extension OBControllerWithList : UICollectionViewDelegate {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        guard let dataSource,
+              let item: CellConfiguration = dataSource.itemIdentifier(for: indexPath) else {
+            return
+        }
+        
+        let alertController: UIAlertController = UIAlertController(title: item.labels.primary.text,
+                                                                   message: item.labels.secondary.text,
+                                                                   preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+        present(alertController, animated: true)
     }
 }
