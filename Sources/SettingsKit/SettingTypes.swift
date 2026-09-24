@@ -162,6 +162,7 @@ public class SelectionSetting : BaseSetting, @unchecked Sendable {
     public init(key: String,
                 title: String,
                 details: String? = nil,
+                secondaryTitle: String? = nil,
                 values: [String : Any],
                 selectedValue: Any? = nil,
                 action: @escaping () -> Void,
@@ -172,6 +173,7 @@ public class SelectionSetting : BaseSetting, @unchecked Sendable {
         super.init(key: key,
                    title: title,
                    details: details,
+                   secondaryTitle: secondaryTitle,
                    delegate: delegate)
     }
 }
@@ -233,15 +235,18 @@ public class StepperSetting : BaseSetting, @unchecked Sendable {
 
 public class TapSetting : BaseSetting, @unchecked Sendable {
     public var color: UIColor
+    public var useColor: Bool
     public var handler: (UIViewController) -> Void
     
     public init(key: String,
                 title: String,
                 details: String? = nil,
                 color: UIColor = .systemBlue,
+                useColor: Bool = true,
                 handler: @escaping (UIViewController) -> Void,
                 delegate: (any SettingDelegate)? = nil) {
         self.color = color
+        self.useColor = useColor
         self.handler = handler
         super.init(key: key,
                    title: title,

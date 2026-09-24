@@ -53,16 +53,23 @@ public extension UIButton {
 public extension UIButton.Configuration {
     static func glassConfiguration(_ size: Size, _ cornerStyle: CornerStyle,
                                    _ image: UIImage? = nil, _ text: String? = nil, _ scale: UIImage.SymbolScale = .large,
-                                   _ tintColor: UIColour? = nil) -> UIButton.Configuration {
+                                   _ tintColor: UIColour? = nil, inverseColor: Bool = false) -> UIButton.Configuration {
         var configuration: UIButton.Configuration = if tintColor == nil {
             .glass()
         } else {
             .prominentGlass()
         }
         
-        if let tintColor {
-            configuration.baseBackgroundColor = .clear
-            configuration.baseForegroundColor = tintColor
+        if inverseColor {
+            if let tintColor {
+                configuration.baseBackgroundColor = tintColor
+                configuration.baseForegroundColor = .white
+            }
+        } else {
+            if let tintColor {
+                configuration.baseBackgroundColor = .clear
+                configuration.baseForegroundColor = tintColor
+            }
         }
         
         configuration.buttonSize = size
@@ -106,9 +113,9 @@ public extension UIButton.Configuration {
 public extension UIButton.Configuration {
     static func configuration(_ size: Size, _ cornerStyle: CornerStyle,
                               _ image: UIImage? = nil, _ text: String? = nil, _ scale: UIImage.SymbolScale? = .large,
-                              _ tintColor: UIColour? = nil) -> UIButton.Configuration {
+                              _ tintColor: UIColour? = nil, inverseColor: Bool = false) -> UIButton.Configuration {
         if #available(iOS 26, *) {
-            glassConfiguration(size, cornerStyle, image, text, scale ?? .large, tintColor)
+            glassConfiguration(size, cornerStyle, image, text, scale ?? .large, tintColor, inverseColor: inverseColor)
         } else {
             filledConfiguration(size, cornerStyle, image, text, scale ?? .large)
         }

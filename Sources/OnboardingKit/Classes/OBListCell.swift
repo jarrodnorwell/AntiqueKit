@@ -94,7 +94,7 @@ final class OBListCell : UICollectionViewListCell {
         }
         
         imageView.image = configuration.image?
-            .applyingSymbolConfiguration(UIImage.SymbolConfiguration(font: configuration.labels.primary.font))
+            .applyingSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: configuration.labels.primary.font.pointSize))
         
         textLabel.font = configuration.labels.primary.font
         if let attributedText: AttributedString = configuration.labels.primary.attributedText {
