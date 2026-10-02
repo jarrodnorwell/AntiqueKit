@@ -13,6 +13,7 @@ public struct OBControllerConfiguration {
     public var image: UIImage? = nil
     public var textConfiguration, secondaryConfiguration: LabelConfiguration
     public var tertiaryConfiguration: LabelConfiguration? = nil
+    public var shouldUseVibrancy: Bool
     
     public let buttons: [(configuration: UIButton.Configuration, action: @MainActor (UIViewController) async -> Void)]
     
@@ -20,12 +21,14 @@ public struct OBControllerConfiguration {
     
     public init(image: UIImage? = nil,
                 textConfiguration: LabelConfiguration, secondaryConfiguration: LabelConfiguration, tertiaryConfiguration: LabelConfiguration? = nil,
+                shouldUseVibrancy: Bool = true,
                 buttons: [(configuration: UIButton.Configuration, action: @MainActor (UIViewController) async -> Void)],
                 colors: [Colour] = Colour.vibrantBlues) {
         self.image = image
         self.textConfiguration = textConfiguration
         self.secondaryConfiguration = secondaryConfiguration
         self.tertiaryConfiguration = tertiaryConfiguration
+        self.shouldUseVibrancy = shouldUseVibrancy
         self.buttons = buttons
         self.colors = colors
     }

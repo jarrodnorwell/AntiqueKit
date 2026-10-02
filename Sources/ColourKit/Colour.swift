@@ -23,6 +23,18 @@ public extension Colour {
         Colour(red: 0.00, green: 0.25, blue: 0.50)
     ]
     
+    static let vibrantIndigos: [Colour] = [
+        Colour(red: 0.89, green: 0.87, blue: 1.00),
+        Colour(red: 0.80, green: 0.78, blue: 1.00),
+        Colour(red: 0.71, green: 0.68, blue: 1.00),
+        Colour(red: 0.62, green: 0.58, blue: 1.00),
+        Colour(red: 0.38, green: 0.33, blue: 0.96),
+        Colour(red: 0.30, green: 0.26, blue: 0.85),
+        Colour(red: 0.24, green: 0.21, blue: 0.72),
+        Colour(red: 0.18, green: 0.15, blue: 0.59),
+        Colour(red: 0.13, green: 0.11, blue: 0.45)
+    ]
+    
     static let vibrantBrowns: [Colour] = [
         Colour(red: 0.95, green: 0.90, blue: 0.80),
         Colour(red: 0.90, green: 0.80, blue: 0.65),

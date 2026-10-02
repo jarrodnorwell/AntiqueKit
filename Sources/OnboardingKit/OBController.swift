@@ -48,6 +48,7 @@ open class OBController : UIViewController {
     var vibrancyVisualEffectView: UIVisualEffectView? = nil
     
     public var imageView: UIImageView? = nil
+    public var unvibrantImageView: UIImageView? = nil
     
     var textLabel: UILabel? = nil,
         secondaryTextLabel: UILabel? = nil,
@@ -129,13 +130,21 @@ open class OBController : UIViewController {
         rightContainerView.translatesAutoresizingMaskIntoConstraints = false
         subviewToAddSubviews.addSubview(rightContainerView)
         
-        imageView = UIImageView(image: configuration.image)
+        imageView = UIImageView(image: configuration.shouldUseVibrancy ? configuration.image : nil)
         guard let imageView else {
             return
         }
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
         (isPortrait ? subviewToAddSubviews : leftContainerView).addSubview(imageView)
+        
+        unvibrantImageView = UIImageView(image: configuration.shouldUseVibrancy ? nil : configuration.image)
+        guard let unvibrantImageView else {
+            return
+        }
+        unvibrantImageView.translatesAutoresizingMaskIntoConstraints = false
+        unvibrantImageView.contentMode = .scaleAspectFit
+        view.addSubview(unvibrantImageView)
         
         textLabel = UILabel()
         guard let textLabel else {
@@ -282,7 +291,7 @@ open class OBController : UIViewController {
             leftContainerView.subviews.forEach(\.removeFromSuperview)
             rightContainerView.subviews.forEach(\.removeFromSuperview)
             
-            guard let imageView, let textLabel, let secondaryTextLabel, let stackView else {
+            guard let imageView, let unvibrantImageView, let textLabel, let secondaryTextLabel, let stackView else {
                 return
             }
             
@@ -295,8 +304,6 @@ open class OBController : UIViewController {
             if let tertiaryTextLabel {
                 subviewToAddSubviews.addSubview(tertiaryTextLabel)
             }
-            
-            view.addSubview(stackView)
         } else {
             let subviewToAddSubviews: UIView = vibrancyVisualEffectView?.contentView ?? view
             
@@ -320,13 +327,11 @@ open class OBController : UIViewController {
             if let tertiaryTextLabel {
                 rightContainerView.addSubview(tertiaryTextLabel)
             }
-            
-            view.addSubview(stackView)
         }
     }
     
     func addConstraintsForPad() {
-        guard let imageView, let textLabel, let secondaryTextLabel, let stackView else {
+        guard let imageView, let unvibrantImageView, let textLabel, let secondaryTextLabel, let stackView else {
             return
         }
         
@@ -343,6 +348,10 @@ open class OBController : UIViewController {
             imageView.height.constraint(equalTo: imageView.safeAreaLayoutGuide.width),
             imageView.width.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.width, multiplier: imageWidthMultiplier),
             
+            unvibrantImageView.top.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.top, constant: 60.0),
+            unvibrantImageView.height.constraint(equalTo: unvibrantImageView.safeAreaLayoutGuide.width),
+            unvibrantImageView.width.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.width, multiplier: imageWidthMultiplier),
+            
             textLabel.top.constraint(equalTo: imageView.safeAreaLayoutGuide.bottom, constant: 20.0),
             secondaryTextLabel.top.constraint(equalTo: textLabel.safeAreaLayoutGuide.bottom, constant: 8.0),
             
@@ -355,6 +364,7 @@ open class OBController : UIViewController {
         case .left:
             [
                 imageView.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                unvibrantImageView.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 
                 textLabel.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 textLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
@@ -362,6 +372,7 @@ open class OBController : UIViewController {
         case .center:
             [
                 imageView.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX),
+                unvibrantImageView.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX),
                 
                 textLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 textLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
@@ -370,6 +381,7 @@ open class OBController : UIViewController {
         case .right:
             [
                 imageView.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
+                unvibrantImageView.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
                 
                 textLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 textLabel.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
@@ -421,7 +433,7 @@ open class OBController : UIViewController {
     }
     
     func addConstraintsForPhone() {
-        guard let imageView, let textLabel, let secondaryTextLabel, let stackView else {
+        guard let imageView, let unvibrantImageView, let textLabel, let secondaryTextLabel, let stackView else {
             return
         }
         
@@ -439,6 +451,10 @@ open class OBController : UIViewController {
             imageView.height.constraint(equalTo: imageView.safeAreaLayoutGuide.width),
             imageView.width.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.width, multiplier: 0.5),
             
+            unvibrantImageView.top.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.top, constant: 60.0),
+            unvibrantImageView.height.constraint(equalTo: unvibrantImageView.safeAreaLayoutGuide.width),
+            unvibrantImageView.width.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.width, multiplier: 0.5),
+            
             textLabel.top.constraint(equalTo: imageView.safeAreaLayoutGuide.bottom, constant: 20.0),
             secondaryTextLabel.top.constraint(equalTo: textLabel.safeAreaLayoutGuide.bottom, constant: 8.0),
             
@@ -451,6 +467,7 @@ open class OBController : UIViewController {
         case .left:
             [
                 imageView.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
+                unvibrantImageView.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 
                 textLabel.left.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 textLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
@@ -458,6 +475,7 @@ open class OBController : UIViewController {
         case .center:
             [
                 imageView.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX),
+                unvibrantImageView.centerX.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.centerX),
                 
                 textLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 textLabel.right.constraint(lessThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
@@ -466,6 +484,7 @@ open class OBController : UIViewController {
         case .right:
             [
                 imageView.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
+                unvibrantImageView.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0),
                 
                 textLabel.left.constraint(greaterThanOrEqualTo: subviewToAddSubviews.safeAreaLayoutGuide.left, constant: 20.0),
                 textLabel.right.constraint(equalTo: subviewToAddSubviews.safeAreaLayoutGuide.right, constant: -20.0)
@@ -539,6 +558,11 @@ open class OBController : UIViewController {
             imageView.width.constraint(equalTo: leftContainerView.safeAreaLayoutGuide.height, multiplier: 0.66),
             imageView.centerX.constraint(equalTo: leftContainerView.safeAreaLayoutGuide.centerX),
             imageView.centerY.constraint(equalTo: leftContainerView.safeAreaLayoutGuide.centerY),
+            
+            unvibrantImageView.height.constraint(equalTo: unvibrantImageView.safeAreaLayoutGuide.width),
+            unvibrantImageView.width.constraint(equalTo: leftContainerView.safeAreaLayoutGuide.height, multiplier: 0.66),
+            unvibrantImageView.centerX.constraint(equalTo: leftContainerView.safeAreaLayoutGuide.centerX),
+            unvibrantImageView.centerY.constraint(equalTo: leftContainerView.safeAreaLayoutGuide.centerY),
             
             textLabel.top.constraint(equalTo: rightContainerView.safeAreaLayoutGuide.top, constant: 60.0),
             secondaryTextLabel.top.constraint(equalTo: textLabel.safeAreaLayoutGuide.bottom, constant: 8.0),
