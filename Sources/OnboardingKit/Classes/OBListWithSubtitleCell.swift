@@ -1,0 +1,270 @@
+//
+//  OBListWithSubtitleCell.swift
+//  AntiqueKit
+//
+//  Created by Jarrod Norwell on 4/10/2026.
+//
+
+import ConstraintKit
+import UIKit
+
+final class OBListWithSubtitleCell : UICollectionViewListCell {
+    private var visualEffectView: UIVisualEffectView? = nil
+    private var imageView: UIImageView? = nil,
+                secondaryImageView: UIImageView? = nil
+    private var textLabel: UILabel? = nil,
+            secondaryTextLabel: UILabel? = nil
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+        
+        visualEffectView = if #available(iOS 26.0, *) {
+            UIVisualEffectView(effect: UIGlassEffect(style: .regular))
+        } else {
+            UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+        }
+        
+        guard let visualEffectView: UIVisualEffectView else {
+            return
+        }
+        
+        if #available(iOS 26.0, *) {
+            clipsToBounds = true
+            
+            cornerConfiguration = .capsule()
+            contentView.cornerConfiguration = cornerConfiguration
+            visualEffectView.cornerConfiguration = cornerConfiguration
+        } else {
+            
+        }
+        
+        backgroundView = visualEffectView
+        
+        imageView = UIImageView()
+        guard let imageView else {
+            return
+        }
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        contentView.addSubview(imageView)
+        
+        secondaryImageView = UIImageView(image: UIImage(systemName: "chevron.right"))
+        guard let secondaryImageView else {
+            return
+        }
+        secondaryImageView.translatesAutoresizingMaskIntoConstraints = false
+        secondaryImageView.contentMode = .scaleAspectFit
+        secondaryImageView.tintColor = .separator
+        contentView.addSubview(secondaryImageView)
+        
+        textLabel = UILabel()
+        guard let textLabel else {
+            return
+        }
+        textLabel.translatesAutoresizingMaskIntoConstraints = false
+        textLabel.numberOfLines = 1
+        contentView.addSubview(textLabel)
+        
+        secondaryTextLabel = UILabel()
+        guard let secondaryTextLabel else {
+            return
+        }
+        secondaryTextLabel.translatesAutoresizingMaskIntoConstraints = false
+        secondaryTextLabel.numberOfLines = 1
+        contentView.addSubview(secondaryTextLabel)
+        
+        contentView.addConstraints([
+            imageView.top.constraint(equalTo: contentView.salg.top, constant: 20.0),
+            imageView.left.constraint(equalTo: contentView.salg.left, constant: 20.0),
+            imageView.width.constraint(equalToConstant: 24.0),
+            imageView.height.constraint(equalTo: imageView.salg.width),
+            
+            imageView.bottom.constraint(equalTo: contentView.salg.bottom, constant: -20.0),
+            
+            secondaryImageView.top.constraint(equalTo: contentView.salg.top, constant: 20.0),
+            secondaryImageView.right.constraint(equalTo: contentView.salg.right, constant: -20.0),
+            secondaryImageView.width.constraint(equalToConstant: 16.0),
+            secondaryImageView.height.constraint(equalTo: imageView.salg.width),
+            
+            textLabel.left.constraint(equalTo: imageView.salg.right, constant: 20.0),
+            textLabel.centerY.constraint(equalTo: contentView.salg.centerY),
+            
+            secondaryTextLabel.right.constraint(equalTo: secondaryImageView.salg.left, constant: -20.0),
+            secondaryTextLabel.centerY.constraint(equalTo: contentView.salg.centerY),
+            
+            textLabel.right.constraint(lessThanOrEqualTo: secondaryTextLabel.salg.left, constant: -20.0),
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(with configuration: CellConfiguration, _ overFullScreen: Bool) {
+        guard let imageView: UIImageView, let textLabel: UILabel, let secondaryTextLabel: UILabel else {
+            return
+        }
+        
+        imageView.image = configuration.image?
+            .applyingSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: configuration.labels.primary.font.pointSize))
+        
+        textLabel.font = configuration.labels.primary.font
+        if let attributedText: AttributedString = configuration.labels.primary.attributedText {
+            textLabel.attributedText = NSAttributedString(attributedText)
+        } else {
+            textLabel.text = configuration.labels.primary.text
+        }
+        textLabel.textAlignment = configuration.labels.primary.alignment
+        textLabel.textColor = configuration.labels.primary.color
+        
+        if let secondary = configuration.labels.secondary {
+            secondaryTextLabel.font = secondary.font
+            if let attributedText: AttributedString = secondary.attributedText {
+                secondaryTextLabel.attributedText = NSAttributedString(attributedText)
+            } else {
+                secondaryTextLabel.text = secondary.text
+            }
+            secondaryTextLabel.textAlignment = secondary.alignment
+            secondaryTextLabel.textColor = secondary.color
+        }
+    }
+}
+
+/*
+class OBListCell : UICollectionViewCell {
+    var visualEffectView: UIVisualEffectView? = nil
+    
+    var imageView: UIImageView? = nil
+    
+    var textLabel: UILabel? = nil,
+        secondaryTextLabel: UILabel? = nil
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+        
+        visualEffectView = if #available(iOS 26.0, *) {
+            UIVisualEffectView(effect: UIGlassEffect(style: .regular))
+        } else {
+            UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+        }
+        
+        guard let visualEffectView else {
+            return
+        }
+        visualEffectView.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 26.0, *) {
+            cornerConfiguration = .capsule()
+            visualEffectView.cornerConfiguration = .capsule()
+        } else {
+            visualEffectView.clipsToBounds = true
+            visualEffectView.layer.cornerCurve = .continuous
+            visualEffectView.layer.cornerRadius = 24.0
+        }
+        addSubview(visualEffectView)
+        sendSubviewToBack(visualEffectView)
+        
+        visualEffectView.top.constraint(equalTo: safeAreaLayoutGuide.top).isActive = true
+        visualEffectView.left.constraint(equalTo: safeAreaLayoutGuide.left).isActive = true
+        visualEffectView.bottom.constraint(equalTo: safeAreaLayoutGuide.bottom).isActive = true
+        visualEffectView.right.constraint(equalTo: safeAreaLayoutGuide.right).isActive = true
+        
+        imageView = UIImageView()
+        guard let imageView else {
+            return
+        }
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        contentView.addSubview(imageView)
+        
+        textLabel = UILabel()
+        guard let textLabel else {
+            return
+        }
+        textLabel.translatesAutoresizingMaskIntoConstraints = false
+        textLabel.numberOfLines = 1
+        contentView.addSubview(textLabel)
+        
+        // secondaryTextLabel = UILabel()
+        // guard let secondaryTextLabel else {
+        //     return
+        // }
+        // secondaryTextLabel.translatesAutoresizingMaskIntoConstraints = false
+        // secondaryTextLabel.numberOfLines = 5
+        // contentView.addSubview(secondaryTextLabel)
+        
+        contentView.addConstraints([
+            imageView.top.constraint(equalTo: contentView.salg.top, constant: 20.0),
+            imageView.left.constraint(equalTo: contentView.salg.left, constant: 20.0),
+            imageView.width.constraint(equalToConstant: 24.0),
+            imageView.height.constraint(equalTo: imageView.salg.widthAnchor),
+            
+            textLabel.top.constraint(equalTo: contentView.salg.top, constant: 20.0),
+            textLabel.left.constraint(equalTo: imageView.salg.right, constant: 20.0),
+            textLabel.bottom.constraint(equalTo: contentView.salg.bottom, constant: -20.0),
+            textLabel.right.constraint(lessThanOrEqualTo: contentView.salg.right, constant: -20.0),
+            
+            //secondaryTextLabel.top.constraint(equalTo: textLabel.salg.bottom, constant: 8.0),
+            //secondaryTextLabel.left.constraint(equalTo: imageView.salg.right, constant: 20.0),
+            //secondaryTextLabel.bottom.constraint(equalTo: contentView.salg.bottom, constant: -20.0),
+            //secondaryTextLabel.right.constraint(lessThanOrEqualTo: contentView.salg.right, constant: -20.0),
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if !overFullScreen {
+            guard let visualEffectView else {
+                return
+            }
+            
+            visualEffectView.isHidden = true
+            
+            backgroundColor = .secondarySystemBackground
+            if #available(iOS 26.0, *) {
+                visualEffectView.cornerConfiguration = cornerConfiguration
+            } else {
+                clipsToBounds = true
+                layer.cornerCurve = .continuous
+                layer.cornerRadius = layer.frame.height / 2.0
+                
+                visualEffectView.layer.cornerRadius = layer.cornerRadius
+            }
+        }
+    }
+    
+    var overFullScreen: Bool = false
+    func configure(with configuration: CellConfiguration, _ overFullScreen: Bool) {
+        self.overFullScreen = overFullScreen
+        guard let imageView, let textLabel else {
+            return
+        }
+        
+        imageView.image = configuration.image?
+            .applyingSymbolConfiguration(UIImage.SymbolConfiguration(font: configuration.labels.primary.font))
+        
+        textLabel.font = configuration.labels.primary.font
+        if let attributedText: AttributedString = configuration.labels.primary.attributedText {
+            textLabel.attributedText = NSAttributedString(attributedText)
+        } else {
+            textLabel.text = configuration.labels.primary.text
+        }
+        textLabel.textAlignment = configuration.labels.primary.alignment
+        textLabel.textColor = configuration.labels.primary.color
+        
+        // secondaryTextLabel.font = configuration.labels.secondary.font
+        // if let attributedText: AttributedString = configuration.labels.secondary.attributedText {
+        //     secondaryTextLabel.attributedText = NSAttributedString(attributedText)
+        // } else {
+        //     secondaryTextLabel.text = configuration.labels.secondary.text
+        // }
+        // secondaryTextLabel.textAlignment = configuration.labels.secondary.alignment
+        // secondaryTextLabel.textColor = configuration.labels.secondary.color
+    }
+}
+*/

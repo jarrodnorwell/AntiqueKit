@@ -22,9 +22,9 @@ public struct CellConfiguration : Comparable, Equatable, Hashable, @unchecked Se
     }
     
     public var image: UIImage? = nil
-    public let labels: (primary: LabelConfiguration, secondary: LabelConfiguration)
+    public let labels: (primary: LabelConfiguration, secondary: LabelConfiguration?, tertiary: LabelConfiguration)
     
-    public init(image: UIImage? = nil, labels: (primary: LabelConfiguration, secondary: LabelConfiguration)) {
+    public init(image: UIImage? = nil, labels: (primary: LabelConfiguration, secondary: LabelConfiguration?, tertiary: LabelConfiguration)) {
         self.image = image
         self.labels = labels
     }

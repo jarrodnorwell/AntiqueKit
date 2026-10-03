@@ -227,6 +227,10 @@ open class OBControllerWithList : UIViewController {
             cell.configure(with: itemIdentifier, self.modalPresentationStyle == .overFullScreen)
         }
         
+        let cellWithSubtitleRegistration: UICollectionView.CellRegistration<OBListWithSubtitleCell, CellConfiguration> = UICollectionView.CellRegistration { cell, indexPath, itemIdentifier in
+            cell.configure(with: itemIdentifier, self.modalPresentationStyle == .overFullScreen)
+        }
+        
         let supplementaryCell: UICollectionView.SupplementaryRegistration<UICollectionViewListCell> = UICollectionView.SupplementaryRegistration(elementKind: UICollectionView.elementKindSectionHeader) { supplementaryView, elementKind, indexPath in
             var contentConfiguration = UIListContentConfiguration.extraProminentInsetGroupedHeader()
             if let dataSource: UICollectionViewDiffableDataSource<String, CellConfiguration> = self.dataSource,
@@ -237,7 +241,11 @@ open class OBControllerWithList : UIViewController {
         }
         
         dataSource = UICollectionViewDiffableDataSource<String, CellConfiguration>(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
-            collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+            if let secondaryConfiguration = itemIdentifier.labels.secondary {
+                collectionView.dequeueConfiguredReusableCell(using: cellWithSubtitleRegistration, for: indexPath, item: itemIdentifier)
+            } else {
+                collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+            }
         }
         
         guard let dataSource else {
@@ -719,7 +727,7 @@ extension OBControllerWithList : UICollectionViewDelegate {
         }
         
         let alertController: UIAlertController = UIAlertController(title: item.labels.primary.text,
-                                                                   message: item.labels.secondary.text,
+                                                                   message: item.labels.tertiary.text,
                                                                    preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         present(alertController, animated: true)
